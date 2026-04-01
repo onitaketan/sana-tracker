@@ -24,6 +24,10 @@ body { background: #f5f4ef; min-height: 100vh; }
 .cond-left { font-size: 11px; color: #7B2FA8; }
 .cond-amount { font-size: 18px; font-weight: 500; color: #7B2FA8; }
 .cond-note { font-size: 10px; color: #9B5CC8; }
+.rule-memo { background: #F3E8FB; border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; border-left: 3px solid #7B2FA8; }
+.rule-memo-title { font-size: 12px; font-weight: 600; color: #7B2FA8; margin-bottom: 6px; }
+.rule-memo-item { font-size: 11px; color: #7B2FA8; padding: 2px 0; }
+.rule-memo-old { color: #B89BD0; text-decoration: line-through; font-size: 10px; margin-top: 4px; }
 .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
 .stat-card { background: #fff; border-radius: 10px; padding: 0.75rem; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 .stat-label { font-size: 10px; color: #aaa; margin-bottom: 2px; }
@@ -122,24 +126,30 @@ body { background: #f5f4ef; min-height: 100vh; }
     <div class="shared-banner"><div class="shared-dot"></div><div class="shared-text" id="sync-status">Firebase に接続中…</div></div>
     <div class="person-tag">さな</div>
     <div class="balance-card">
-      <div class="balance-label">現在の確定残高</div>
-      <div class="balance-num" id="balance-display">…</div>
+      <div class="balance-label">120万円ベース 現在の残高</div>
+      <div class="balance-num" id="cond-balance">…</div>
+    </div>
+    <div class="rule-memo">
+      <div class="rule-memo-title">📋 120万円ルール</div>
+      <div class="rule-memo-item">・120万円維持の為に月1回会うこと</div>
+      <div class="rule-memo-item">・2回目で5万円減らす</div>
+      <div class="rule-memo-item rule-memo-old">旧: 月3回会い、2回目以降で1回3万円減</div>
     </div>
     <div class="cond-card">
       <div>
-        <div class="cond-left">条件付き合意ベース（120万円起点）</div>
-        <div class="cond-note">双方認識に残る「120万円にする話」を適用した場合</div>
+        <div class="cond-left">確定残高（155万円起点）</div>
+        <div class="cond-note">整理メモ確認ベースの実残高</div>
       </div>
-      <div class="cond-amount" id="cond-balance">…</div>
+      <div class="cond-amount" id="balance-display">…</div>
     </div>
     <div class="stats-row">
       <div class="stat-card"><div class="stat-label">起点（2026/01/16）</div><div class="stat-val">¥1,550,000</div></div>
       <div class="stat-card"><div class="stat-label">起点後の追加貸付</div><div class="stat-val" id="post-lent">…</div></div>
     </div>
     <div class="unknown-box">
-      <div class="unknown-label">📝 金額不明・別途確認が必要な孛替</div>
-      <div class="unknown-item">・福山行き新并線代 2回分（2025/06 時期不特定）</div>
-      <div class="unknown-item">・姫路行き新年線代（2025/10/14 自由席）</div>
+      <div class="unknown-label">📝 金額不明・別途確認が必要な立替</div>
+      <div class="unknown-item">・福山行き新幹線代 2回分（2025/06 時期不特定）</div>
+      <div class="unknown-item">・姫路行き新幹線代（2025/10/14 自由席）</div>
       <div class="unknown-item">・タクシー代 複数回（個別金額不明）</div>
       <div class="unknown-item">・iPhone本体・関連費用（実額不明）</div>
       <div class="unknown-item">・返済金額不明 2回（2025/08/19・2025/10/15）</div>
@@ -163,7 +173,7 @@ body { background: #f5f4ef; min-height: 100vh; }
         <button class="pbt" onclick="setGA(30000)">-3万</button>
       </div>
       <hr class="divider">
-      <div class="section-label">現金で湡した金額（任意）</div>
+      <div class="section-label">現金で渡した金額（任意）</div>
       <input type="number" id="cash-amount" placeholder="0または空欄でなし" step="1000" oninput="syncAP()">
       <div class="preset-row" id="amber-presets">
         <button class="pbt sel-amber" onclick="setAA(0)">なし</button>
@@ -180,7 +190,7 @@ body { background: #f5f4ef; min-height: 100vh; }
     <div class="add-form editor-only" id="loan-form">
       <div class="form-title">追加貸付を記録</div>
       <div class="field-group"><label>金額 (円)</label><input type="number" id="loan-amount" placeholder="例: 10000" step="1000"></div>
-      <div class="field-group"><label>メモ</label><input type="text" id="loan-memo" placeholder="例: PayPay / 新幹線代" maxlength="40"></div>
+      <div class="field-group"><label>メモ</label><input type="text" id="loan-memo" placeholder="例: PayPay / 新年線代" maxlength="40"></div>
       <div class="add-form-btns">
         <button class="btn-confirm" onclick="addLoan()">追加</button>
         <button class="btn-cancel2" onclick="closeForms()">キャンセル</button>
@@ -195,7 +205,7 @@ body { background: #f5f4ef; min-height: 100vh; }
         <button class="pbt" onclick="setRA(100000)">10万</button>
         <button class="pbt" onclick="setRA(200000)">20万</button>
       </div>
-      <div class="field-group"><label>メモ</label><input type="text" id="repay-memo" placeholder="例: 鉠行振込" maxlength="40"></div>
+      <div class="field-group"><label>メモ</label><input type="text" id="repay-memo" placeholder="例: 銀行振込" maxlength="40"></div>
       <div class="add-form-btns">
         <button class="btn-confirm" onclick="addRepay()">記録する</button>
         <button class="btn-cancel2" onclick="closeForms()">キャンセル</button>
@@ -292,23 +302,23 @@ const PRE_ORIGIN_TXS=[
   {id:'p7',type:'meet',label:'面談（博多駅で車で拾う）',delta:0,cash:0,date:'2025-07-21T12:00:00Z',locked:true,note:'博多駅で車で拾う'},
   {id:'p8',type:'loan',label:'PayPay送金',delta:10000,cash:0,date:'2025-08-13T12:00:00Z',locked:true,note:'「1万PayPay貸して」→受け取り依頼送付'},
   {id:'p9',type:'repay',label:'返済（金額不明）',delta:0,cash:0,date:'2025-08-19T12:00:00Z',locked:true,note:'「振り込めた！よかたー」→「よかった」（金額不明）'},
-  {id:'p10',type:'loan',label:'PayPay送金',delta:3000,cash:0,date:'2025-09-04T12:00:00Z',locked:true,note:'「いま3000だけ借りるのむり？」→受け取り依頼送付'},
+  {id:'p10',type:'loan',label:'PayPay送金',delta:3000,cash:0,date:'2025-09-04T12:00:00Z',locked:true,note:'「いま3000だけ借りるのやり？」→受け取り依頼送付'},
   {id:'p11',type:'meet',label:'面談（朝）',delta:0,cash:0,date:'2025-09-12T08:00:00Z',locked:true,note:'タクシー手配→到着確認'},
   {id:'p12',type:'meet',label:'面談（夜・会食）',delta:0,cash:0,date:'2025-09-12T20:00:00Z',locked:true,note:'迎え→会食（朝とは別件）'},
   {id:'p13',type:'meet',label:'面談（天神からタクシー）',delta:0,cash:0,date:'2025-10-10T12:00:00Z',locked:true,note:'天神からタクシー乗車→支払い→到着'},
-  {id:'p14',type:'repay',label:'返済（金額不明）',delta:0,cash:0,date:'2025-10-15T12:00:00Z',locked:true,note:'「えくった！」→「ok」（金額不明）'},
+  {id:'p14',type:'repay',label:'返済（金額不明）',delta:0,cash:0,date:'2025-10-15T12:00:00Z',locked:true,note:'「おくった！」→「ok」（金額不明）'},
   {id:'p15',type:'loan',label:'PayPay送金',delta:1000,cash:0,date:'2025-11-11T12:00:00Z',locked:true,note:'「千円PayPayしてくれない？」→受け取り依頼送付'},
   {id:'p16',type:'loan',label:'PayPay送金',delta:3000,cash:0,date:'2025-11-27T12:00:00Z',locked:true,note:'3000円くらい？→受け取り依頼送付'},
   {id:'p17',type:'repay',label:'PayPay返済',delta:-1000,cash:0,date:'2025-12-08T12:00:00Z',locked:true,note:'12/07に1000円借入→12/08「かえした！」'},
 ];
 const POST_ORIGIN_TXS=[
   {id:'q1',type:'meet',label:'面談（深夜・日付またぎ）',delta:0,cash:0,date:'2026-01-05T23:00:00Z',locked:true,note:'深夜面談。「迎えに行くね」→「おります！」。1/5-6日またぎで1回計上。'},
-  {id:'q2',type:'meet',label:'面談（深夜・日付またぎ）',delta:0,cash:0,date:'2026-01-15T23:00:00Z',locked:true,note:'深夜面談。タクシーコール→粍日「昨日は買い物までありがとう」。1/15-16日またぎで1回計上。'},
+  {id:'q2',type:'meet',label:'面談（深夜・日付またぎ）',delta:0,cash:0,date:'2026-01-15T23:00:00Z',locked:true,note:'深夜面談。タクシーコール→翌日「昨日は貸い物までありがとう」。1/15-16日またぎで1回計上。'},
   {id:'q3',type:'loan',label:'PayPay送金',delta:20000,cash:0,date:'2026-01-19T12:00:00Z',locked:true,note:'「2万円PayPay貸して」→受け取り依頼送付'},
   {id:'q4',type:'loan',label:'PayPay送金（水道代）',delta:4000,cash:0,date:'2026-02-12T12:00:00Z',locked:true,note:'「水道止まってしまった 4000円PayPay」→受け取り依頼送付'},
   {id:'q5',type:'loan',label:'銀行振込（ガス代）',delta:8000,cash:0,date:'2026-03-02T12:00:00Z',locked:true,note:'「8000円でいい？」→「振り込んだ」'},
   {id:'q6',type:'meet',label:'面談（深夜・中洲発）',delta:0,cash:0,date:'2026-03-23T23:00:00Z',locked:true,note:'「中洲からタクシーで向かう」→翌日「昨日はありがとう」。3/23-24日またぎで1回計上。'},
-  {id:'q7',type:'loan',label:'銀行振込（携帯代）',delta:21000,cash:0,date:'2026-03-24T12:00:00Z',locked:true,note:'「21000がいいかな」→送金画像'},
+  {id:'q7',type:'loan',label:'鉠行振込（携帯代）',delta:21000,cash:0,date:'2026-03-24T12:00:00Z',locked:true,note:'「21000がいいかな」→送金画像'},
 ];
 const ORIGIN_DATE=new Date('2026-01-16T00:00:00Z');
 let userTxs=[],currentFilter='all',pendingId=null,pendingAction=null;
