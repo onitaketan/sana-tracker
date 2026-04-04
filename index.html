@@ -131,9 +131,10 @@ body { background: #f5f4ef; min-height: 100vh; }
     </div>
     <div class="rule-memo">
       <div class="rule-memo-title">📋 120万円ルール</div>
-      <div class="rule-memo-item">・120万円維持の為に月1回会うこと</div>
-      <div class="rule-memo-item">・2回目で5万円減らす</div>
-      <div class="rule-memo-item rule-memo-old">旧: 月3回会い、2回目以降で1回3万円減</div>
+      <div class="rule-memo-item">・1回会ったら3万円残高を減らす</div>
+      <div class="rule-memo-item">・月1回は最低でも会う</div>
+      <div class="rule-memo-item">・会わなかったら120万円はなかった事に（基点155万円に戻す）</div>
+      <div class="rule-memo-item rule-memo-old">旧: 120万円維持の為に月1回会う、2回目で5万円減らす</div>
     </div>
     <div class="cond-card">
       <div>
@@ -173,7 +174,7 @@ body { background: #f5f4ef; min-height: 100vh; }
         <button class="pbt" onclick="setGA(30000)">-3万</button>
       </div>
       <hr class="divider">
-      <div class="section-label">現金で渡した金額（任意）</div>
+      <div class="section-label">現金で溡した金額（任意）</div>
       <input type="number" id="cash-amount" placeholder="0または空欄でなし" step="1000" oninput="syncAP()">
       <div class="preset-row" id="amber-presets">
         <button class="pbt sel-amber" onclick="setAA(0)">なし</button>
@@ -190,7 +191,7 @@ body { background: #f5f4ef; min-height: 100vh; }
     <div class="add-form editor-only" id="loan-form">
       <div class="form-title">追加貸付を記録</div>
       <div class="field-group"><label>金額 (円)</label><input type="number" id="loan-amount" placeholder="例: 10000" step="1000"></div>
-      <div class="field-group"><label>メモ</label><input type="text" id="loan-memo" placeholder="例: PayPay / 新年線代" maxlength="40"></div>
+      <div class="field-group"><label>メモ</label><input type="text" id="loan-memo" placeholder="例: PayPay / 新幹線代" maxlength="40"></div>
       <div class="add-form-btns">
         <button class="btn-confirm" onclick="addLoan()">追加</button>
         <button class="btn-cancel2" onclick="closeForms()">キャンセル</button>
@@ -301,24 +302,24 @@ const PRE_ORIGIN_TXS=[
   {id:'p6',type:'meet',label:'面談（うに引き渡し・博多駅送り）',delta:0,cash:0,date:'2025-07-15T12:00:00Z',locked:true,note:'うに引き渡し・博多駅送り'},
   {id:'p7',type:'meet',label:'面談（博多駅で車で拾う）',delta:0,cash:0,date:'2025-07-21T12:00:00Z',locked:true,note:'博多駅で車で拾う'},
   {id:'p8',type:'loan',label:'PayPay送金',delta:10000,cash:0,date:'2025-08-13T12:00:00Z',locked:true,note:'「1万PayPay貸して」→受け取り依頼送付'},
-  {id:'p9',type:'repay',label:'返済（金額不明）',delta:0,cash:0,date:'2025-08-19T12:00:00Z',locked:true,note:'「振り込めた！よかたー」→「よかった」（金額不明）'},
-  {id:'p10',type:'loan',label:'PayPay送金',delta:3000,cash:0,date:'2025-09-04T12:00:00Z',locked:true,note:'「いま3000だけ借りるのやり？」→受け取り依頼送付'},
+  {id:'p9',type:'repay',label:'返済（金額不明）',delta:0,cash:0,date:'2025-08-19T12:00:00Z',locked:true,note:'「振り込めた！よかたー」→「よかった」（金顝不明）'},
+  {id:'p10',type:'loan',label:'PayPay送金',delta:3000,cash:0,date:'2025-09-04T12:00:00Z',locked:true,note:'「いま3000だけ借りるのむり？」→受け取り依頼送付'},
   {id:'p11',type:'meet',label:'面談（朝）',delta:0,cash:0,date:'2025-09-12T08:00:00Z',locked:true,note:'タクシー手配→到着確認'},
   {id:'p12',type:'meet',label:'面談（夜・会食）',delta:0,cash:0,date:'2025-09-12T20:00:00Z',locked:true,note:'迎え→会食（朝とは別件）'},
   {id:'p13',type:'meet',label:'面談（天神からタクシー）',delta:0,cash:0,date:'2025-10-10T12:00:00Z',locked:true,note:'天神からタクシー乗車→支払い→到着'},
-  {id:'p14',type:'repay',label:'返済（金額不明）',delta:0,cash:0,date:'2025-10-15T12:00:00Z',locked:true,note:'「おくった！」→「ok」（金額不明）'},
-  {id:'p15',type:'loan',label:'PayPay送金',delta:1000,cash:0,date:'2025-11-11T12:00:00Z',locked:true,note:'「千円PayPayしてくれない？」→受け取り依頼送付'},
+  {id:'p14',type:'repay',label:'返済（金額不明）',delta:0,cash:0,date:'2025-10-15T12:00:00Z',locked:true,note:'「えくった！」→「ok」（金額不明）'},
+  {id:'p15',type:'loan',label:'PayPay送金',delta:1000,cash:0,date:'2025-11-11T12:00:00Z',locked:true,note:'「半円PayPayしてくれない？」→受け取り依頼送付'},
   {id:'p16',type:'loan',label:'PayPay送金',delta:3000,cash:0,date:'2025-11-27T12:00:00Z',locked:true,note:'3000円くらい？→受け取り依頼送付'},
   {id:'p17',type:'repay',label:'PayPay返済',delta:-1000,cash:0,date:'2025-12-08T12:00:00Z',locked:true,note:'12/07に1000円借入→12/08「かえした！」'},
 ];
 const POST_ORIGIN_TXS=[
   {id:'q1',type:'meet',label:'面談（深夜・日付またぎ）',delta:0,cash:0,date:'2026-01-05T23:00:00Z',locked:true,note:'深夜面談。「迎えに行くね」→「おります！」。1/5-6日またぎで1回計上。'},
-  {id:'q2',type:'meet',label:'面談（深夜・日付またぎ）',delta:0,cash:0,date:'2026-01-15T23:00:00Z',locked:true,note:'深夜面談。タクシーコール→翌日「昨日は貸い物までありがとう」。1/15-16日またぎで1回計上。'},
+  {id:'q2',type:'meet',label:'面談（深夜・日付またぎ）',delta:0,cash:0,date:'2026-01-15T23:00:00Z',locked:true,note:'深夜面談。タクシーコール→翌日「昨日は買い物までありがとう」。1/15-16日またぎで1回計上。'},
   {id:'q3',type:'loan',label:'PayPay送金',delta:20000,cash:0,date:'2026-01-19T12:00:00Z',locked:true,note:'「2万円PayPay貸して」→受け取り依頼送付'},
   {id:'q4',type:'loan',label:'PayPay送金（水道代）',delta:4000,cash:0,date:'2026-02-12T12:00:00Z',locked:true,note:'「水道止まってしまった 4000円PayPay」→受け取り依頼送付'},
   {id:'q5',type:'loan',label:'銀行振込（ガス代）',delta:8000,cash:0,date:'2026-03-02T12:00:00Z',locked:true,note:'「8000円でいい？」→「振り込んだ」'},
   {id:'q6',type:'meet',label:'面談（深夜・中洲発）',delta:0,cash:0,date:'2026-03-23T23:00:00Z',locked:true,note:'「中洲からタクシーで向かう」→翌日「昨日はありがとう」。3/23-24日またぎで1回計上。'},
-  {id:'q7',type:'loan',label:'鉠行振込（携帯代）',delta:21000,cash:0,date:'2026-03-24T12:00:00Z',locked:true,note:'「21000がいいかな」→送金画像'},
+  {id:'q7',type:'loan',label:'銀行振込（携帯代）',delta:21000,cash:0,date:'2026-03-24T12:00:00Z',locked:true,note:'「21000がいいかな」→送金画像'},
 ];
 const ORIGIN_DATE=new Date('2026-01-16T00:00:00Z');
 let userTxs=[],currentFilter='all',pendingId=null,pendingAction=null;
