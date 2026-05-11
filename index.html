@@ -144,12 +144,10 @@ input, textarea { -webkit-user-select: auto; user-select: auto; }
 <div class="person-tag">さな</div>
 
 <div class="balance-card">
-<div class="balance-label">現在の貸付残高</div>
-<div class="balance-num" id="balance-display">…</div>
+<div class="balance-label">現在の貸付残高（120万円ベース）</div>
+<div class="balance-num" id="cond-balance-display">…</div>
 <div class="balance-breakdown">
-<div class="bd-item"><div class="bd-label">起点（2026/01/16）</div><div class="bd-val" id="origin-display">¥1,550,000</div></div>
-<div class="bd-op">+</div>
-<div class="bd-item"><div class="bd-label">起点後の増減</div><div class="bd-val" id="diff-display">…</div></div>
+<div class="bd-item"><div class="bd-label">条件破棄なら（155万円ベース）</div><div class="bd-val" id="balance-display">…</div></div>
 </div>
 </div>
 
@@ -295,37 +293,61 @@ input, textarea { -webkit-user-select: auto; user-select: auto; }
 
 <script>
 // 起点：2026/01/16 双方認識ベースの整理メモ
-const ORIGIN_BAL = 1550000;        // 起点残高
+const ORIGIN_BAL = 1550000;        // 155万円ベース（条件破棄時の戻り先）
 const ORIGIN_DATE = '2026-01-16T00:00:00.000Z';
 const AGREED_AMOUNT = 1200000;     // 条件付き合意額（参考表示）
 const RULE_BASELINE = 1550000;     // 120万円ルール違反時の戻り先
 const MEET_UNIT = 30000;           // 1回当たり減額の標準値
 const SKEY = 'sana-tracker-data-v1';
 
-// 起点以降の確定済み事実（残高計算に反映）
+// PRESET_TXS：個別エントリ（displayOnly: 履歴のみ）と起点以降の実取引（残高計算に反映）
 const PRESET_TXS = [
-  // 起点前の集計（表示のみ・残高計算には不参加）
-  { id:'s-meet-summary', type:'meet-summary', label:'面談累計 12回（2025/05〜2026/03 集計済み）', delta:0, cash:0, date:'2026-01-15T00:00:00.000Z', locked:true, note:'起点（2026/01/16）残高 ¥1,550,000 にすべて織り込み済み。' },
-  // 起点後の確定済み（残高計算に反映）
-  { id:'s-loan-1', type:'loan', label:'追加貸付（01/19〜03/24分 集計）', delta:53000, cash:0, date:'2026-02-15T00:00:00.000Z', locked:true, note:'2026/01/19〜03/24 に確定済みの追加貸付合計 +¥53,000' },
-  { id:'s-repay-1', type:'repay', label:'返済（確定分）', delta:-1000, cash:0, date:'2026-02-20T00:00:00.000Z', locked:true, note:'起点前後を通じて確定済みの返済 -¥1,000' },
+  // ── 起点前（2025/05〜2025/12）— 履歴表示のみ、残高計算には不参加 ──
+  { id:'p1', type:'meet', label:'面談（博多周辺）', delta:0, cash:0, date:'2025-05-22T12:00:00.000Z', locked:true, displayOnly:true, note:'タクシー配車→「のった！スーパーもありがとう」' },
+  { id:'p4', type:'loan', label:'PayPay送金', delta:10000, cash:0, date:'2025-06-03T12:00:00.000Z', locked:true, displayOnly:true, note:'「PayPay10000借りれない？」→「おくった」' },
+  { id:'p2', type:'meet', label:'面談', delta:0, cash:0, date:'2025-06-04T12:00:00.000Z', locked:true, displayOnly:true, note:'タクシー配車→到着連絡' },
+  { id:'p3', type:'meet', label:'面談', delta:0, cash:0, date:'2025-06-05T12:00:00.000Z', locked:true, displayOnly:true, note:'タクシー配車→「ありがとう！！」' },
+  { id:'p5', type:'meet', label:'面談（買い物・送迎）', delta:0, cash:0, date:'2025-07-07T12:00:00.000Z', locked:true, displayOnly:true, note:'タクシー手配→買い物・送迎' },
+  { id:'p6', type:'meet', label:'面談（うに引き渡し・博多駅送り）', delta:0, cash:0, date:'2025-07-15T12:00:00.000Z', locked:true, displayOnly:true, note:'うに引き渡し・博多駅送り' },
+  { id:'p7', type:'meet', label:'面談（博多駅で車で拾う）', delta:0, cash:0, date:'2025-07-21T12:00:00.000Z', locked:true, displayOnly:true, note:'博多駅で車で拾う' },
+  { id:'p8', type:'loan', label:'PayPay送金', delta:10000, cash:0, date:'2025-08-13T12:00:00.000Z', locked:true, displayOnly:true, note:'「1万PayPay貸して」→受け取り依頼送付' },
+  { id:'p9', type:'repay', label:'返済（金額不明）', delta:0, cash:0, date:'2025-08-19T12:00:00.000Z', locked:true, displayOnly:true, note:'「振り込めた！よかたー」→「よかった」（金額不明）' },
+  { id:'p10', type:'loan', label:'PayPay送金', delta:3000, cash:0, date:'2025-09-04T12:00:00.000Z', locked:true, displayOnly:true, note:'「いま3000だけ借りるのむり？」→受け取り依頼送付' },
+  { id:'p11', type:'meet', label:'面談（朝）', delta:0, cash:0, date:'2025-09-12T08:00:00.000Z', locked:true, displayOnly:true, note:'タクシー手配→到着確認' },
+  { id:'p12', type:'meet', label:'面談（夜・会食）', delta:0, cash:0, date:'2025-09-12T20:00:00.000Z', locked:true, displayOnly:true, note:'迎え→会食（朝とは別件）' },
+  { id:'p13', type:'meet', label:'面談（天神からタクシー）', delta:0, cash:0, date:'2025-10-10T12:00:00.000Z', locked:true, displayOnly:true, note:'天神からタクシー乗車→支払い→到着' },
+  { id:'p14', type:'repay', label:'返済（金額不明）', delta:0, cash:0, date:'2025-10-15T12:00:00.000Z', locked:true, displayOnly:true, note:'「えくった！」→「ok」（金額不明）' },
+  { id:'p15', type:'loan', label:'PayPay送金', delta:1000, cash:0, date:'2025-11-11T12:00:00.000Z', locked:true, displayOnly:true, note:'「半円PayPayしてくれない？」→受け取り依頼送付' },
+  { id:'p16', type:'loan', label:'PayPay送金', delta:3000, cash:0, date:'2025-11-27T12:00:00.000Z', locked:true, displayOnly:true, note:'3000円くらい？→受け取り依頼送付' },
+  { id:'p17', type:'repay', label:'PayPay返済', delta:-1000, cash:0, date:'2025-12-08T12:00:00.000Z', locked:true, displayOnly:true, note:'12/07に1000円借入→12/08「かえした！」' },
+  // ── 起点（2026/01/16）以降の個別エントリ — 残高計算に反映（120万ルール: meet は -3万） ──
+  { id:'q1', type:'meet', label:'面談（深夜・日付またぎ）', delta:-30000, cash:0, date:'2026-01-05T23:00:00.000Z', locked:true, note:'深夜面談。「迎えに行くね」→「おります！」。1/5-6日またぎで1回計上。' },
+  { id:'q2', type:'meet', label:'面談（深夜・日付またぎ）', delta:-30000, cash:0, date:'2026-01-15T23:00:00.000Z', locked:true, note:'深夜面談。タクシーコール→翌日「昨日は買い物までありがとう」。1/15-16日またぎで1回計上。' },
+  { id:'q3', type:'loan', label:'PayPay送金', delta:20000, cash:0, date:'2026-01-19T12:00:00.000Z', locked:true, note:'「2万円PayPay貸して」→受け取り依頼送付' },
+  { id:'q4', type:'loan', label:'PayPay送金（水道代）', delta:4000, cash:0, date:'2026-02-12T12:00:00.000Z', locked:true, note:'「水道止まってしまった 4000円PayPay」→受け取り依頼送付' },
+  { id:'q5', type:'loan', label:'銀行振込（ガス代）', delta:8000, cash:0, date:'2026-03-02T12:00:00.000Z', locked:true, note:'「8000円でいい？」→「振り込んだ」' },
+  { id:'q6', type:'meet', label:'面談（深夜・中洲発）', delta:-30000, cash:0, date:'2026-03-23T23:00:00.000Z', locked:true, note:'「中洲からタクシーで向かう」→翌日「昨日はありがとう」。3/23-24日またぎで1回計上。' },
+  { id:'q7', type:'loan', label:'銀行振込（携帯代）', delta:21000, cash:0, date:'2026-03-24T12:00:00.000Z', locked:true, note:'「21000がいいかな」→送金画像' },
+  { id:'q8', type:'meet', label:'メゾンエムアイ', delta:-30000, cash:0, date:'2026-04-19T02:51:53.075Z', locked:true, note:'Firebase 残存データから復元' },
 ];
+
+const COND_BAL = 1200000;  // 120万円ベース（条件を守っている前提の残高）
 
 let userTxs=[], currentFilter='all', pendingId=null, pendingAction=null;
 let isViewer=false;
 
 function computeState(){
-  const originDate = new Date(ORIGIN_DATE);
-  const postOriginPresets = PRESET_TXS.filter(t => new Date(t.date) >= originDate);
+  const postOriginPresets = PRESET_TXS.filter(t => !t.displayOnly);
   const userSorted = [...userTxs].sort((a,b)=>new Date(a.date)-new Date(b.date));
   const allPost = [...postOriginPresets, ...userSorted].sort((a,b)=>new Date(a.date)-new Date(b.date));
-  let running = ORIGIN_BAL;
-  allPost.forEach(tx => { running += tx.delta; tx._bal = running; });
+  let running = ORIGIN_BAL, condRunning = COND_BAL;
+  allPost.forEach(tx => { running += tx.delta; condRunning += tx.delta; tx._bal = running; tx._cbal = condRunning; });
   const lastBal = allPost.length ? allPost[allPost.length-1]._bal : ORIGIN_BAL;
+  const lastCond = allPost.length ? allPost[allPost.length-1]._cbal : COND_BAL;
   const diff = lastBal - ORIGIN_BAL;
   const allDisplay = [...PRESET_TXS, ...userTxs].sort((a,b)=>new Date(a.date)-new Date(b.date));
   const totalCash = allDisplay.reduce((s,t)=>s+(t.cash||0),0);
-  return { balance:lastBal, diff, totalCash, allDisplay };
+  return { balance:lastBal, condBalance:lastCond, diff, totalCash, allDisplay };
 }
 
 function loadState(){
@@ -383,7 +405,7 @@ const TYPE_CLASS = { meet:'meet', loan:'loan', repay:'repay', cash:'cash', 'meet
 function render(){
   const s = computeState();
   document.getElementById('balance-display').textContent = fmt(s.balance);
-  document.getElementById('diff-display').textContent = fmtSigned(s.diff);
+  document.getElementById('cond-balance-display').textContent = fmt(s.condBalance);
   document.getElementById('total-cash').textContent = fmt(s.totalCash);
 }
 
