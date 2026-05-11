@@ -152,13 +152,13 @@ input, textarea { -webkit-user-select: auto; user-select: auto; }
 </div>
 
 <div class="rule-card">
-<div class="rule-title">📋 120万円ルール</div>
+<div class="rule-title">📋 120万円ルール（2026/04/02 正式合意）</div>
 <ul class="rule-list">
 <li>1回会ったら3万円残高を減らす</li>
 <li>月1回は最低でも会う</li>
 <li>会わなかったら120万円はなかった事に（基点155万円に戻す）</li>
 </ul>
-<div class="rule-old"><strong>旧ルール（参考・廃止）：</strong>120万円維持の為に月1回会う、2回目で5万円減らす</div>
+<div class="rule-old"><strong>旧ルール（参考・廃止）：</strong>120万円維持の為に月1回会う、2回目で5万円減らす<br><strong>合意までの経緯：</strong>1/6 初回提案 → 1/16 きみまろ155万に戻す→さな抗議 → 4/2 「会うたび -3万」で再合意</div>
 </div>
 
 <div class="stats-row">
@@ -322,14 +322,14 @@ const PRESET_TXS = [
   { id:'p16', type:'loan', label:'PayPay送金', delta:3000, cash:0, date:'2025-11-27T12:00:00.000Z', locked:true, displayOnly:true, note:'3000円くらい？→受け取り依頼送付' },
   { id:'p17', type:'repay', label:'PayPay返済', delta:-1000, cash:0, date:'2025-12-08T12:00:00.000Z', locked:true, displayOnly:true, note:'12/07に1000円借入→12/08「かえした！」' },
   // ── 起点（2026/01/16）以降の個別エントリ — 残高計算に反映（120万ルール: meet は -3万） ──
-  { id:'q1', type:'meet', label:'面談（深夜・日付またぎ）', delta:-30000, cash:0, date:'2026-01-05T23:00:00.000Z', locked:true, note:'深夜面談。「迎えに行くね」→「おります！」。1/5-6日またぎで1回計上。' },
-  { id:'q2', type:'meet', label:'面談（深夜・日付またぎ）', delta:-30000, cash:0, date:'2026-01-15T23:00:00.000Z', locked:true, note:'深夜面談。タクシーコール→翌日「昨日は買い物までありがとう」。1/15-16日またぎで1回計上。' },
+  { id:'q1', type:'meet', label:'面談（深夜・日付またぎ）', delta:0, cash:0, date:'2026-01-05T23:00:00.000Z', locked:true, note:'1/6 00:51 きみまろ「残高を1,200,000円にします（月3回会うことで2回 -3万、月1回なら無効）」と初回提案。会うたび -3万 ルールは未確定なので残高影響なし。' },
+  { id:'q2', type:'meet', label:'面談（深夜・日付またぎ）', delta:0, cash:0, date:'2026-01-15T23:00:00.000Z', locked:true, note:'1/16 17:16 きみまろがノート更新「貸付相残高 155万円」→ さな抗議「120万じゃなかった(?)」。ルール未確定なので残高影響なし。' },
   { id:'q3', type:'loan', label:'PayPay送金', delta:20000, cash:0, date:'2026-01-19T12:00:00.000Z', locked:true, note:'「2万円PayPay貸して」→受け取り依頼送付' },
   { id:'q4', type:'loan', label:'PayPay送金（水道代）', delta:4000, cash:0, date:'2026-02-12T12:00:00.000Z', locked:true, note:'「水道止まってしまった 4000円PayPay」→受け取り依頼送付' },
   { id:'q5', type:'loan', label:'銀行振込（ガス代）', delta:8000, cash:0, date:'2026-03-02T12:00:00.000Z', locked:true, note:'「8000円でいい？」→「振り込んだ」' },
-  { id:'q6', type:'meet', label:'面談（深夜・中洲発）', delta:-30000, cash:0, date:'2026-03-23T23:00:00.000Z', locked:true, note:'「中洲からタクシーで向かう」→翌日「昨日はありがとう」。3/23-24日またぎで1回計上。' },
+  { id:'q6', type:'meet', label:'面談（深夜・中洲発）', delta:0, cash:0, date:'2026-03-23T23:00:00.000Z', locked:true, note:'「中洲からタクシーで向かう」→翌日「昨日はありがとう」。3/23-24日またぎで1回計上。120万ルール正式合意（4/2）前なので残高影響なし。' },
   { id:'q7', type:'loan', label:'銀行振込（携帯代）', delta:21000, cash:0, date:'2026-03-24T12:00:00.000Z', locked:true, note:'「21000がいいかな」→送金画像' },
-  { id:'q8', type:'meet', label:'メゾンエムアイ', delta:-30000, cash:0, date:'2026-04-19T02:51:53.075Z', locked:true, note:'Firebase 残存データから復元' },
+  { id:'q8', type:'meet', label:'メゾンエムアイ', delta:-30000, cash:0, date:'2026-04-19T02:51:53.075Z', locked:true, note:'120万ルール正式合意（4/2）以降の面談。-3万 を残高から減額。Firebase 残存データから復元。' },
 ];
 
 const COND_BAL = 1200000;  // 120万円ベース（条件を守っている前提の残高）
